@@ -1,0 +1,6 @@
+<h1>Listening test</h1>
+<p style="text-align: center;">You will hear short phrases in Māori that contain an R sound. Decide whether or not you think the pronunciation of the R sound is correct/natural and click on the corresponding Yes/No button. </p>
+<p style="text-align: center;">There are no right or wrong answers. Your answers are helping us to understand what is important when pronouncing this sound in te reo Māori.</p>
+<p style="text-align: center;">The order of the buttons may swap during the test. </p>
+<p style="text-align: center;">Please make sure your headphones are in and your sound is on.</p>
+<p style="text-align: center;">Press next to begin.</p>
