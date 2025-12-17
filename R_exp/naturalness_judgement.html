@@ -190,6 +190,22 @@ var jsPsych = initJsPsych({
 
 
 
+
+/*********************************************************************************/
+/******************************** Enter email **********************************/
+/*********************************************************************************/
+
+var email_block = {
+    type: jsPsychSurveyText,
+    //preamble: "<h1>Participation ID</h1>",
+    questions: [{prompt: "<p>Enter your email address: </p>", rows: 1, columns: 80}],
+    button_label: "Next",
+    on_finish: function(data){
+        jsPsych.data.addProperties({emailID: data.response.Q0});
+        emailID = data.response.Q0;
+    }
+};
+
 /*********************************************************************************/
 /******************************** Enter participant No **********************************/
 /*********************************************************************************/
@@ -738,6 +754,7 @@ var timeline = [];
 
 //timeline = timeline.concat(sound_test);
 timeline = timeline.concat(participantID_block);
+timeline = timeline.concat(email_block);
 timeline = timeline.concat(instructions_block);
 //timeline = timeline.concat(practice_block);
 timeline = timeline.concat(instructionsAfterPractice_block);
