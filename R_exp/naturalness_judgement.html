@@ -98,7 +98,7 @@
 /*********************************************************************************/
 /****************************** Global Variables *********************************/
 /*********************************************************************************/
-
+var GOOGLE_SHEETS_URL = 'https://us-central1-the-pulsar-481521-r6.cloudfunctions.net/submitData'
 inst = ''; // Variable for storing the instructions
 stimuliList = '';// Variable for storing the input data (csv)
 consent= '';// Variable for storing the consent
@@ -194,17 +194,17 @@ var jsPsych = initJsPsych({
 /*********************************************************************************/
 /******************************** Enter email **********************************/
 /*********************************************************************************/
-
-var email_block = {
-    type: jsPsychSurveyText,
-    //preamble: "<h1>Participation ID</h1>",
-    questions: [{prompt: "<p>Enter your email address: </p>", rows: 1, columns: 80}],
-    button_label: "Next",
-    on_finish: function(data){
-        jsPsych.data.addProperties({emailID: data.response.Q0});
-        emailID = data.response.Q0;
-    }
-};
+//<!--
+//var email_block = {
+//    type: jsPsychSurveyText,
+//    //preamble: "<h1>Participation ID</h1>",
+//    questions: [{prompt: "<p>Enter your email address: </p>", rows: 1, columns: 80}],
+//    button_label: "Next",
+//    on_finish: function(data){
+//        jsPsych.data.addProperties({emailID: data.response.Q0});
+//        emailID = data.response.Q0;
+//    }
+//};
 
 /*********************************************************************************/
 /******************************** Enter participant No **********************************/
@@ -591,7 +591,7 @@ var exp_question_1 = {
             sound_0: jsPsych.timelineVariable('sound_0'),
             sound_1: jsPsych.timelineVariable('sound_1')
         },
-    on_finish: function(data){
+    on_finish: async function(data){
         var answer = "";
         if(data.response == 0){
             answer = data.option_0;
@@ -600,6 +600,23 @@ var exp_question_1 = {
         };
         jsPsych.data.addDataToLastTrial({answer: answer});
         jsPsych.data.addDataToLastTrial({block: repetition_count});
+
+        // Send to Google Sheets
+        const trialData = {
+            participantID: participantID,
+            timestamp: new Date().toISOString(),
+            phase: data.phase,
+            word: data.word,
+            carrier: data.carrier,
+            block: repetition_count,
+            answer: answer,
+            response_time: data.rt,
+            sound_0: data.sound_0,
+            sound_1: data.sound_1,
+            wordAccent: data.wordAccent,
+            carrierAccent: data.carrierAccent
+        };
+        await sendToGoogleSheets(trialData, GOOGLE_SHEETS_URL);
     }
 }
 
@@ -620,15 +637,32 @@ var exp_question_2 = {
             sound_0: jsPsych.timelineVariable('sound_0'),
             sound_1: jsPsych.timelineVariable('sound_1')
         },
-    on_finish: function(data){
+    on_finish: async function(data){
         var answer = "";
         if(data.response == 0){
-            answer = data.option_0; // swapped above so no need to swap here
+            answer = data.option_0;
         }else if(data.response == 1){
             answer = data.option_1;
         };
         jsPsych.data.addDataToLastTrial({answer: answer});
         jsPsych.data.addDataToLastTrial({block: repetition_count});
+
+        // Send to Google Sheets
+        const trialData = {
+            participantID: participantID,
+            timestamp: new Date().toISOString(),
+            phase: data.phase,
+            word: data.word,
+            carrier: data.carrier,
+            block: repetition_count,
+            answer: answer,
+            response_time: data.rt,
+            sound_0: data.sound_0,
+            sound_1: data.sound_1,
+            wordAccent: data.wordAccent,
+            carrierAccent: data.carrierAccent
+        };
+        await sendToGoogleSheets(trialData, GOOGLE_SHEETS_URL);
     }
 }
 
@@ -729,7 +763,26 @@ function stamp(){
     var stamp = year +''+ month +''+ day +''+ hour +''+ minute +''+ second ;
     return stamp;
 };
+/** This function is called whenever a trial is completed. It sends the trial data to a google sheet **/
+async function sendToGoogleSheets(trialData, deploymentUrl) {
+    try {
+        const response = await fetch(deploymentUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(trialData)
+        });
 
+        if (!response.ok) {
+            console.error('Failed to send data to Google Sheets:', response.statusText);
+        } else {
+            console.log('Data successfully sent to Google Sheets');
+        }
+    } catch (error) {
+        console.error('Error sending data to Google Sheets:', error);
+    }
+}
 /** This function is called when the experiment finishes. Add a thank you message,
 	debriefing or direct participants somewhere else (e.g. back to prolific or mturk)
     \
@@ -754,7 +807,7 @@ var timeline = [];
 
 //timeline = timeline.concat(sound_test);
 timeline = timeline.concat(participantID_block);
-timeline = timeline.concat(email_block);
+//timeline = timeline.concat(email_block);
 timeline = timeline.concat(instructions_block);
 //timeline = timeline.concat(practice_block);
 timeline = timeline.concat(instructionsAfterPractice_block);
