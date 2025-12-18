@@ -113,7 +113,7 @@ practiceInstructions = '<h1>YO</h1><br/><p style="text-align: center;">YO<br>YO<
 question = '<p style="text-align: center;"> Does the pronunciation of R in this recording sound natural?</p>';
 question_continue = '<h1>Why?</h1>';
 buttonSwapText = '<p style="text-align: center;"> The order of buttons will now be swapped.</p>';
-finishText = '<p style="text-align: center;">You have completed the listening experiment.</p><br/>';
+finishText = '<p style="text-align: center;">You have completed the listening experiment. Your responses will now be downloaded as a CSV file.</p><br/>';
 
 correctFeedbackText = '<span style="color:green;font-size:30px;">Correct </span>'
 incorrectFeedbackText = '<span style="color:red;font-size:30px;">Incorrect</span>'
@@ -213,7 +213,7 @@ var jsPsych = initJsPsych({
 var participantID_block = {
     type: jsPsychSurveyText,
     //preamble: "<h1>Participation ID</h1>",
-    questions: [{prompt: "<p>Participation ID </p>", rows: 1, columns: 80}],
+    questions: [{prompt: "<p>Participation ID (please enter your initials)</p>", rows: 1, columns: 80}],
     button_label: "Next",
     on_finish: function(data){
         jsPsych.data.addProperties({participantID: data.response.Q0});
